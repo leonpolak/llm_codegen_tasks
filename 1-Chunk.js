@@ -1,3 +1,39 @@
+//...GPT-4o1- preview:
+
+const ID_LENGTH = 4;
+
+class Chunk {
+  static encode(id, payload) {
+    const chunk = new Uint8Array(ID_LENGTH + payload.length);
+    new DataView(chunk.buffer, chunk.byteOffset, ID_LENGTH).setInt32(0, id);
+    chunk.set(payload, ID_LENGTH);
+    return chunk;
+  }
+
+  static decode(chunk) {
+    const id = new DataView(chunk.buffer, chunk.byteOffset, ID_LENGTH).getInt32(0);
+    const payload = chunk.subarray(ID_LENGTH);
+    return { id, payload };
+  }
+}
+
+// Usage
+
+const data = new TextEncoder().encode('Hello World');
+const packet = Chunk.encode(123, data);
+console.log(packet);
+
+const { id, payload } = Chunk.decode(packet);
+const text = new TextDecoder().decode(payload);
+console.log({ id, payload: text });
+
+const assert = require('assert');
+assert.strictEqual(id, 123);
+assert.strictEqual(text, 'Hello World');
+
+module.exports = { Chunk };
+
+/*
 //...Claudi
 
 const ID_LENGTH = 4;
@@ -82,3 +118,4 @@ class Chunk {
     return new Chunk(streamId, payload);
   }
 }
+  */

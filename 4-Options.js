@@ -1,3 +1,37 @@
+//...GPT-4o1- preview:
+// Define Symbols
+const x = Symbol('x');
+const _ = Symbol('_');
+
+// Store entries in an array to preserve duplicates
+const options = [
+  [x, 'Uno'],
+  [_, 'Due'],
+  [x, 'Tre'],
+  [_, 'Quatro'],
+];
+
+// Implement getSelected function to retrieve values for key x
+const getSelected = (options) => {
+  const selectedValues = [];
+
+  for (const [key, value] of options) {
+    if (key === x) {
+      selectedValues.push(value);
+    }
+  }
+
+  return selectedValues;
+};
+
+// Get selected values
+const selected = getSelected(options);
+console.log(selected); // ["Uno", "Tre"]
+
+
+
+/*
+
 //...Cloude:
 
 const getSelected = (options) => {
@@ -55,3 +89,5 @@ function getSelected(options) {
 }
 
 console.log(getSelected(options)); // ["Tre", "Quatro"]
+
+*/
