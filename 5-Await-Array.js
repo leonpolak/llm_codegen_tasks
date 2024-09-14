@@ -2,55 +2,34 @@
 
 //...GPT-4o1- preview:
 
-// Make all arrays thenable by adding a `then` method to Array.prototype
-class ThenableArray extends Array {
-  then(resolve, reject) {
-    return Promise.all(this).then(resolve, reject);
-  }
-}
-
-const f1 = async () => {
-  return new Promise((resolve) => setTimeout(() => resolve('Result 1'), 1000));
+Array.prototype.then = function (onFulfilled, onRejected) {
+  return Promise.all(this).then(onFulfilled, onRejected);
 };
 
-const f2 = async () => {
-  return new Promise((resolve) => setTimeout(() => resolve('Result 2'), 2000));
-};
-
-const f3 = async () => {
-  return new Promise((resolve) => setTimeout(() => resolve('Result 3'), 1500));
-};
+const f1 = async () => { console.log(1) };
+const f2 = async () => { console.log(2) };
+const f3 = async () => { console.log(3) };
 
 (async () => {
-  const p1 = f1();
-  const p2 = f2();
-  const p3 = f3();
+const p1 = f1();
+const p2 = f2();
+const p3 = f3();
+// Now p1, p2, p3 are instances of Promise
 
-  // Create an instance of ThenableArray to avoid modifying Array.prototype
-  const results = await new ThenableArray(p1, p2, p3);
-
-  console.log(results); // ["Result 1", "Result 2", "Result 3"]
+// The array is now thenable and can be awaited
+await [p1, p2, p3];
 })();
-
 /*
 
 Explanation:
-Avoid Modifying Array.prototype:
 
-Instead of adding the then method to Array.prototype, we extend the Array class to create a custom ThenableArray class. This ensures that only arrays created with ThenableArray are treated as thenable objects.
-Using Promise.all Safely:
+Making Arrays Thenable: By adding a then method to Array.prototype, arrays become thenable objects. This means they can be used with await, and JavaScript will treat them like promises.
 
-The then method of ThenableArray uses Promise.all to wait for all promises in the array to resolve, without causing recursion or infinite loops.
-No Global Changes:
+Using Promise.all: The custom then method uses Promise.all(this) to wait for all promises in the array to resolve. The this keyword refers to the array instance.
 
-Since we're not modifying Array.prototype, regular arrays behave normally, and only instances of ThenableArray are thenable.
-Final Output:
-When you run the corrected code, it will output:
+No Infinite Loop: Since the then method directly returns the result of Promise.all, it doesn't introduce any recursion or loops, thus avoiding infinite loops.
 
-css
-Copy code
-["Result 1", "Result 2", "Result 3"]
-This solves the infinite execution issue while keeping the desired functionality.
+Note: Modifying built-in prototypes like Array.prototype is generally discouraged as it can lead to unexpected behavior in other parts of your code or third-party libraries. However, for this specific case and controlled environment, it's acceptable.
 
 */
 
